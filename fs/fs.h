@@ -6,11 +6,13 @@
 #define	O_CREAT		0x0200		/* create if nonexistant */
 #define	O_TRUNC		0x0400		/* truncate to zero length */
 
+#define BLOCK_SIZE sizeof(block)
+
 bool initFS();
 
 /*
 *open
-*pathname eg '/pepe/a.txt'
+*pathname eg '/pepe/a.txt' always full path
 * flags O_RDWR alone if file exists or '|' with O_CREAT or O_TRUNC
 *
 *return filedescriptor to pathname
@@ -20,8 +22,6 @@ int open(char * pathname, int flags);
 int write(int fildes, const void *buf, int nbyte);
 
 void makedirectory(char * directoryName);
-
-void nano(char * filename,char * text);
 
 bool cd(char * dirName);
 

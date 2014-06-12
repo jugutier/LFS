@@ -39,7 +39,7 @@ static int currentExtentBlock = 0;
 static CR * cr;
 //used for the circular buffer:
 static int currentDiskStart = 0;
-static int currentDiskEnd = MAX_SECTOR-1;
+static int currentDiskEnd = MAX_SECTOR;
 
 bool saveCR();
 void initHomeDirectory();
@@ -66,13 +66,20 @@ void mkdir(char * dirName){
 
 }
 void log(block * block){
-	if(currentExtentBlock
+	/**
+	*check if im running out of space and clear if needed
+	**/
+	if(currentExtentBlock == floor(EXTENT_BLOCKS*0.9)){
+		writeLog();
+	}
+	memcpy(extent[currentExtentBlock++] , block,BLOCK_SIZE) ;
 }
 //persists extent to disk, and clears it;
 void writeLog(){
 	for (int i = 0; i < EXTENT_BLOCKS; ++i)
 	{
 		writeDisk(currentDiskEnd+i, currentDiskEnd+i+1, extent[i]);
-		//TODO: clear(extent[i]);
+		memset(extent[i],0,BLOCK_SIZE);
 	}
+	currentExtentBlock = 0;
 }

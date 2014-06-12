@@ -3,9 +3,10 @@
 
 #include <stdbool.h>
 
-#define MAX_SECTOR 10
+#define SECTOR_QTY 10
+#define MAX_SECTOR (SECTOR_QTY-1)
 #define SECTOR_SIZE sizeof(block)
-#define DISK_END ((MAX_SECTOR-1)*SECTOR_SIZE)
+#define DISK_END (MAX_SECTOR*SECTOR_SIZE)
 
 /**
 *initDisk

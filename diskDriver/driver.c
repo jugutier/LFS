@@ -8,38 +8,38 @@ bool initDisk(){
 	if(diskStart != NULL){
 		return false;
 	}
-	diskStart = malloc(MAX_SECTOR * SECTOR_SIZE);
+	diskStart = malloc(SECTOR_QTY * SECTOR_SIZE);
 	return diskStart != NULL;
 }
 void readDisk(int fromsector, int tosector, void * toMemory){
 	bool circular = false;
-	if(tosector < fromsector){
-		circular = true;
-	}
-	int dataSize = abs(tosector- fromsector)* SECTOR_SIZE;
+	int dataSize = 0,splitDataSize = 0;
 	void * startSector = (diskStart+fromsector*SECTOR_SIZE);
-	int splitDataSize = 0;
-	if(circular){
-		splitDataSize = tosector*SECTOR_SIZE;
-		memcpy (toMemory, startSector, DISK_END);
-		memcpy (toMemory, diskStart, splitDataSize);
-	}else{
+	if(tosector == fromsector)
+		return;
+	else if(tosector > fromsector){
+		dataSize = (tosector - fromsector)* SECTOR_SIZE;
 		memcpy (toMemory, startSector, dataSize);
- 	}
+	}else{
+		dataSize = (MAX_SECTOR - fromsector)* SECTOR_SIZE;
+		splitDataSize = tosector * SECTOR_SIZE;
+		memcpy (toMemory, startSector, dataSize);
+		memcpy ((toMemory + dataSize) , diskStart, splitDataSize);
+	}
 }
 void writeDisk(int fromsector, int tosector, const void * fromMemory){
 	bool circular = false;
-	if(tosector < fromsector){
-		circular = true;
-	}
-	int dataSize = abs(tosector- fromsector)* SECTOR_SIZE;
+	int dataSize = 0,splitDataSize = 0;
 	void * startSector = (diskStart+fromsector*SECTOR_SIZE);
-	int splitDataSize = 0;
-	if(circular){
+	if(tosector == fromsector)
+		return;
+	else if(tosector > fromsector){
+		dataSize = (tosector - fromsector)* SECTOR_SIZE;
+		memcpy (startSector, fromMemory, dataSize);
+	}else{
+		dataSize = (MAX_SECTOR - fromsector)* SECTOR_SIZE;
 		splitDataSize = tosector*SECTOR_SIZE;
 		memcpy (startSector, fromMemory , DISK_END);
-		memcpy (diskStart, fromMemory , splitDataSize);
-	}else{
- 		memcpy (startSector, fromMemory, dataSize);
- 	}
+		memcpy (diskStart, (fromMemory+dataSize) , splitDataSize);
+	}
 }
