@@ -12,7 +12,7 @@ int mkdir_main(int argc, char *argv[]){
 }
 
 
-
+//bool cd(char * dirName);
 int nano_main(int argc, char *argv[]){
 //void nano(char * filename,char * text){
 

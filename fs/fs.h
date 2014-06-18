@@ -19,11 +19,19 @@ bool initFS();
 */
 int open(char * pathname, int flags);
 
+/**
+* read from file fildes into buff (allocated by user) nbytes
+* return the actual number of bytes read.
+*/
+int read(int fildes, void * buff,int nbyte);
+
 int write(int fildes, const void *buf, int nbyte);
+/*
+*returns 0 if succesfull
+*/
+int close(int fildes);
 
 void makedirectory(char * directoryName);
 
-bool cd(char * dirName);
-
-void ls();
+char ** list(char * path);
 #endif
