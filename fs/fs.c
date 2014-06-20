@@ -54,17 +54,48 @@ bool saveCR(){
 	return true;
 }
 
-
-Block * getBlock(char * pathname) {
-	/*
-	 *
-	 * Split pathname with "/" as a delimiter.
-	 *check in the extent if path exists
-	 * Goto root inode, and search in the directory for the
-	 * next relative path.
-     */
-     return NULL;
-}
+// Block * getBlockByInode(int inodeNumber)
+// {
+//   /*
+//    * First search for block in extent.
+//    * If it isn't there, then check the disk.
+//    */
+//
+//   return NULL;
+// }
+//
+//
+//
+Block * getBlock(char * pathname) { return NULL; }
+// Block * getBlock(char * pathname)
+// {
+//
+//   Block * currentBlock = getBlockByInode(0);
+//   Directory[13] subdirectories;
+//
+//   const char del = '/';
+//   char str[MAX_FILENAME_SIZE];
+//   strcpy(str, path);
+//
+//   char * token, * saved;
+//
+//   token = e_strtok_r(str, &del, &saved);
+//
+//   int inodeNumber;
+//
+//   while( token != NULL )
+//   {
+//       // if (!block->isDirectory) { return NULL } // error
+//       subdirectories = getSubdirectories(currentBlock); // returns an array of directories
+//       inodeNumber = getInodeNumber(subdirectories, token); // get inode number for a directory name, stored in token var.
+//       current = getInodeBlockByInode(inodeNumber);
+//       // if (current == NULL) { return NULL } // error
+//
+//       token = strtok_r(NULL, &del, &saved);
+//   }
+//
+//   return current;
+// }
 
 int
 getFilename(const char * path, char * filename)
