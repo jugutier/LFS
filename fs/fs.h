@@ -14,8 +14,9 @@
 #define MAX_DATA 256
 #define EXTENT_BLOCKS 5
 #define MAX_DIRECTORY 13
+#define MAX_FILENAME_SIZE 40
 
-typedef struct 
+typedef struct
 {
 	int iNodeNumber;
 	bool isDirectory;
@@ -50,4 +51,7 @@ int close(int fildes);
 void makedirectory(char * directoryName);
 
 char ** list(char * path);
+
+
+int getFilename(const char * path, char * filename);
 #endif

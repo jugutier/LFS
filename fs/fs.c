@@ -1,7 +1,8 @@
 #include "fs.h"
 #include "../diskDriver/driver.h"
+#include "../external_string_lib.h"
 
-/*typedef struct 
+/*typedef struct
 {
 	it supports just one dataBlock for the moment
 	void * dataBlock;
@@ -13,7 +14,7 @@ typedef struct{
 	int iNodeLocation;
 }Directory;//sizeof will be MAX_DATA. or 13 pairs of filename + inode
 
-/*typedef struct 
+/*typedef struct
 {
 	int iNodeNumber;
 	void * diskAddress;
@@ -57,10 +58,10 @@ bool saveCR(){
 
 Block * getBlock(char * pathname) {
 	/*
-	 *  
+	 *
 	 * Split pathname with "/" as a delimiter.
 	 *check in the extent if path exists
-	 * Goto root inode, and search in the directory for the 
+	 * Goto root inode, and search in the directory for the
 	 * next relative path.
      */
      return NULL;
@@ -85,10 +86,7 @@ getFilename(const char * path, char * filename)
 
     return 0;
 }
-/*
-* Inserts the block in the extent and return
-* the extent position.
-*/
+
 int insertInFdTable(Block * block) {
 
 	saveToExtent(block);
@@ -101,13 +99,14 @@ int open(char * pathname, int flags){
 	switch(flags){
 		case  O_RDWR:
 			block = getBlock(pathname);
-			 fd = insertInFdTable(block); 
+			 fd = insertInFdTable(block);
 			return fd;
 		break;
 		case O_RDWR|O_CREAT:
 				// file does not exist
 			parentBlock = getBlock(pathname);//getParentBlock(pathname);
-			char * filename = getFileName(pathname);
+			char filename[100];
+      getFilename(pathname, filename);
 			//malloc b??
 			b.isDirectory = false;
 
@@ -122,11 +121,11 @@ int open(char * pathname, int flags){
 }
 int write(int fildes, const void *buf, int nbyte){
 	/*
-	* Get the extent at position fildes. 
+	* Get the extent at position fildes.
 	* Copy nbyte bytes from buf to block->data
-	* If before writing 
+	* If before writing
 	* strlen(block->data) + nbyte > MAX_DATA
-	* return -1. 
+	* return -1.
 	*/
 }
 
