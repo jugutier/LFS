@@ -2,7 +2,6 @@
 #include "fs/fs.h"
 
 int main(void){
-
 	if(!initDisk()){
 		printf("failed while initDisk\n");
 		return -1;
