@@ -42,11 +42,14 @@ void addEmptyDirectories(Directory ** listofDirectories);
 /************PRIVATE FUNCTIONS **********/
 
 bool initFS(){
-	if(cr!=NULL){
+	if(cr == NULL){
 		cr = malloc(sizeof(CR));
+		if(cr == NULL)
+			return false;
 	}
 	saveCR();
 	initHomeDirectory();
+	return true;
 }
 
 bool saveCR(){
