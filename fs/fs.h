@@ -11,7 +11,7 @@
 #define	O_TRUNC		0x0400		/* truncate to zero length */
 
 #define HOME_DIRECTORY 1//inode number for '/' the home directory
-#define MAX_DATA 256
+#define MAX_DATA 248
 #define EXTENT_BLOCKS 5
 #define MAX_DIRECTORY 13
 #define MAX_FILENAME_SIZE 40
@@ -21,7 +21,7 @@ typedef struct
 	int iNodeNumber;
 	bool isDirectory;
 	char data[MAX_DATA];//text file or Directory as byte string
-}Block;//sizeof = 272
+}Block;//sizeof = 256
 
 #define BLOCK_SIZE sizeof(Block)
 

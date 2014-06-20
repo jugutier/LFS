@@ -8,11 +8,10 @@
 	void * dataBlock;
 }iNode;*/
 
-typedef struct{
-	/*this should be a map to support multiple files per directory*/
-	char fileName [16];
+typedef struct{//use N of this in block data
+	char fileName [12];
 	int iNodeLocation;
-}Directory;//sizeof will be MAX_DATA. or 13 pairs of filename + inode
+}Directory;//sizeof 16 * (N=16) = 256
 
 /*typedef struct
 {
@@ -21,8 +20,8 @@ typedef struct{
 }iMapEntry;*/
 
 typedef struct{
-	int imap [34];//key inodenumber,  disk sector positions
-}CR;//sizeof =272
+	int imap [64];//key inodenumber,  disk sector positions
+}CR;//sizeof = 256
 
 //this will be the cache, cleared with an external thread uppon fillup
 static Block extent [EXTENT_BLOCKS];
