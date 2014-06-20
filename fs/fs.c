@@ -66,8 +66,24 @@ Block * getBlock(char * pathname) {
      return NULL;
 }
 
-char * getFileName(char * pathname) {
-	// Split pathname with "/" and return the last element
+int
+getFilename(const char * path, char * filename)
+{
+    const char del = '/';
+    char str[MAX_FILENAME_SIZE];
+    strcpy(str, path);
+
+    char * token, * saved;
+
+    token = e_strtok_r(str, &del, &saved);
+
+     while( token != NULL )
+     {
+        token = strtok_r(NULL, &del, &saved);
+        if (token != NULL) strcpy(filename, token);
+     }
+
+    return 0;
 }
 /*
 * Inserts the block in the extent and return
