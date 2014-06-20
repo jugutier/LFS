@@ -1,10 +1,6 @@
 #include "fs.h"
 #include "../diskDriver/driver.h"
 
-#define HOME_DIRECTORY 1//inode number for '/' the home directory
-#define MAX_DATA 256
-#define EXTENT_BLOCKS 5
-#define MAX_DIRECTORY 13
 /*typedef struct 
 {
 	it supports just one dataBlock for the moment
@@ -23,27 +19,28 @@ typedef struct{
 	void * diskAddress;
 }iMapEntry;*/
 
-typedef struct 
-{
-	int iNodeNumber;
-	bool isDirectory;
-	char data[MAX_DATA];//text file or Directory as byte string
-}block;//sizeof = 272
-
 typedef struct{
 	int imap [34];//key inodenumber,  disk sector positions
 }CR;//sizeof =272
 
 //this will be the cache, cleared with an external thread uppon fillup
-static block[EXTENT_BLOCKS] extent;
+static Block extent [EXTENT_BLOCKS];
 static int currentExtentBlock = 0;
 static CR * cr;
 //used for the circular buffer:
 static int currentDiskStart = 0;
 static int currentDiskEnd = MAX_SECTOR;
 
+/************PRIVATE FUNCTIONS **********/
 bool saveCR();
 void initHomeDirectory();
+Block * getBlock(char * pathname);
+void saveToExtent(Block * block);
+void extentToDisk();
+char** list(char * path);
+void addEmptyDirectories(Directory ** listofDirectories);
+/************PRIVATE FUNCTIONS **********/
+
 bool initFS(){
 	if(cr!=NULL){
 		cr = malloc(sizeof(CR));
@@ -52,8 +49,9 @@ bool initFS(){
 	initHomeDirectory();
 }
 
-void saveCR(){
+bool saveCR(){
 	writeDisk(currentDiskStart, currentDiskStart+1, cr);
+	return true;
 }
 
 
@@ -77,26 +75,28 @@ char * getFileName(char * pathname) {
 */
 int insertInFdTable(Block * block) {
 
-	log(block);
+	saveToExtent(block);
 	return currentExtentBlock;
 }
 
 int open(char * pathname, int flags){
+	int fd;
+	Block * block , * parentBlock ,b;
 	switch(flags){
 		case  O_RDWR:
-			block * block = getBlock(pathname);
-			int fd = insertInFdTable(b); 
+			block = getBlock(pathname);
+			 fd = insertInFdTable(block); 
 			return fd;
 		break;
 		case O_RDWR|O_CREAT:
 				// file does not exist
-			block * parentBlock = getParentBlock(pathname);
+			parentBlock = getBlock(pathname);//getParentBlock(pathname);
 			char * filename = getFileName(pathname);
-			block b;
+			//malloc b??
 			b.isDirectory = false;
 
-			addFile(parentBlock, &b, filename); // if (... == true)
-			int fd = insertInFdTable(b);
+			//TODO:addFile(parentBlock, &b, filename); // if (... == true)
+			fd = insertInFdTable(&b);
 			return fd;
 		break;
 		case O_RDWR|O_TRUNC:
@@ -122,19 +122,20 @@ int close(int fildes) {
 	return 0;
 }
 void initHomeDirectory(){
-	block * b = malloc(sizeof(block));
+	Block * b = malloc(sizeof(Block));
 	b->isDirectory= true;
-	Directory** subdirectoires;
-	addEmptyDirectories(subdirectoires);
+	Directory** subdirectories;
+	addEmptyDirectories(subdirectories);
 	memcpy(b->data,subdirectories, MAX_DATA);
-	log(b);
+	saveToExtent(b);
 }
 
 void addEmptyDirectories(Directory ** listofDirectories){
 	Directory newDirectories [MAX_DIRECTORY];//malloc
-	listofDirectories = &newDirectories;
-	for(int i = 0; i<MAX_DIRECTORY;i++){
-		newDirectories[i]->iNodeLocation = -1;
+	//listofDirectories = &newDirectories; asign what maloc returns
+	int i;
+	for( i = 0; i<MAX_DIRECTORY;i++){
+		newDirectories[i].iNodeLocation = -1;
 	}
 }
 
@@ -145,22 +146,24 @@ void makedirectory(char * dirName){
 	* subdiretories for the new "folder". log child.
 	*/
 }
-void log(block * block){
+void saveToExtent(Block * block){
 	/**
 	*check if im running out of space and clear if needed
 	**/
 	if(currentExtentBlock == floor(EXTENT_BLOCKS*0.9)){
-		writeLog();
+		extentToDisk();
 	}
-	memcpy(extent[currentExtentBlock++] , block,BLOCK_SIZE) ;
+	memcpy((extent+currentExtentBlock*BLOCK_SIZE) , block,BLOCK_SIZE) ;
+	currentExtentBlock++;
 }
 //persists extent to disk, and clears it;
-void writeLog(){
+void extentToDisk(){
 	//updateCR for each block
-	for (int i = 0; i < EXTENT_BLOCKS; ++i)
+	int i;
+	for ( i = 0; i < EXTENT_BLOCKS; ++i)
 	{
-		writeDisk(currentDiskEnd+i, currentDiskEnd+i+1, extent[i]);
-		memset(extent[i],0,BLOCK_SIZE);
+		writeDisk(currentDiskEnd+i, currentDiskEnd+i+1, (void *)extent+i*BLOCK_SIZE);
+		memset((void *)extent+i*BLOCK_SIZE,0,BLOCK_SIZE);
 	}
 	currentExtentBlock = 0;
 }
@@ -168,4 +171,5 @@ void writeLog(){
 char** list(char * path){
 	/*getBlock of that path,if its not a diretory return null,
 	 save list subdirectoires into return value*/
+	return NULL;
 }

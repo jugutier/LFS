@@ -1,12 +1,28 @@
 #ifndef __FS_H
 #define __FS_H
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
 #define	O_RDWR		0x0002		/* open for reading and writing */
 #define	O_CREAT		0x0200		/* create if nonexistant */
 #define	O_TRUNC		0x0400		/* truncate to zero length */
 
-#define BLOCK_SIZE sizeof(block)
+#define HOME_DIRECTORY 1//inode number for '/' the home directory
+#define MAX_DATA 256
+#define EXTENT_BLOCKS 5
+#define MAX_DIRECTORY 13
+
+typedef struct 
+{
+	int iNodeNumber;
+	bool isDirectory;
+	char data[MAX_DATA];//text file or Directory as byte string
+}Block;//sizeof = 272
+
+#define BLOCK_SIZE sizeof(Block)
 
 bool initFS();
 
