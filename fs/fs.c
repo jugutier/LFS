@@ -41,6 +41,7 @@ char** list(char * path);
 void addEmptyDirectories(Directory ** listofDirectories);
 int getBlockFromExtent(int inode);
 Block * getBlockByInode(int iNodeNumber);
+void getDirectories(Block * b, Directory ** d);
 /************PRIVATE FUNCTIONS **********/
 
 bool initFS(){
@@ -274,10 +275,23 @@ void extentToDisk(){
 	currentExtentBlock = 0;
 }
 //return list of strings with names or null if not a directory
+/*getBlock of that path,if its not a diretory return null,
+ save list subdirectoires into return value*/
 char** list(char * path){
 	Block * b;
+	Directory listofDirectories [MAX_DIRECTORY];
 	b = getBlock(path);
-	/*getBlock of that path,if its not a diretory return null,
-	 save list subdirectoires into return value*/
+	if(b == NULL || !b->isDirectory){
+		return NULL;
+	}
+	getDirectories(b,&listofDirectories);
 	return NULL;
+}
+/*
+*Deserialize directories from b into d
+*/
+void getDirectories(Block * b, Directory ** d){
+	char * data = b->data;
+	int i = 0;
+	memcpy(d,b,MAX_DIRECTORY*sizeof(Directory));
 }
