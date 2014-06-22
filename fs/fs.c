@@ -40,7 +40,7 @@ void extentToDisk();
 char** list(char * path);
 void addEmptyDirectories(Directory ** listofDirectories);
 int getBlockFromExtent(int inode);
-Block * getBlockByInode(int inodeNumber);
+Block * getBlockByInode(int iNodeNumber);
 /************PRIVATE FUNCTIONS **********/
 
 bool initFS(){
@@ -62,18 +62,19 @@ bool saveCR(){
 * First search for block in extent.
 * If it isn't there, then check the disk.
 */
-Block * getBlockByInode(int inodeNumber)
+Block * getBlockByInode(int iNodeNumber)
 {
 	Block * b;
 	int extentBlock = 0,diskBlock = 0 ;
 	extentBlock = getBlockFromExtent(iNodeNumber);
 	if(extentBlock != 0){
-		return extent+i*BLOCK_SIZE;
+		return extent+extentBlock*BLOCK_SIZE;
 	}
 	diskBlock = cr->imap[iNodeNumber];
 	if(diskBlock != 0 ){
 		b = malloc(BLOCK_SIZE);
-		return readDisk(diskBlock, diskBlock +1 , b);
+		readDisk(diskBlock, diskBlock +1 , b);
+		return b;
 	} 
 
    return NULL;
