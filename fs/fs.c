@@ -278,18 +278,21 @@ void extentToDisk(){
 /*getBlock of that path,if its not a diretory return null,
  save list subdirectoires into return value*/
 char** list(char * path){
-	Block * b,int i;
-	Directory listofDirectories [MAX_DIRECTORY];
-	char  retVal[MAX_DIRECTORY][MAX_FILENAME_SIZE];
+	Block * b;int i;
+	Directory * listofDirectories;
+	char  **retVal;
 	b = getBlock(path);
 	if(b == NULL || !b->isDirectory){
 		return NULL;
 	}
+	listofDirectories = malloc(MAX_DIRECTORY*sizeof(Directory));
 	getDirectories(b,&listofDirectories);
-	for(i=0;<i<MAX_DIRECTORY;i++){
-		strcpy(retVal[i],listofDirectories[i].filename);
+	retVal = malloc(MAX_DIRECTORY);
+	for(i=0;i<MAX_DIRECTORY;i++){
+		retVal[i] = malloc(MAX_FILENAME_SIZE);
+		strcpy(retVal[i],listofDirectories[i].fileName);
 	}
-	return retval;
+	return retVal;
 }
 /*
 *Deserialize directories from b into d
