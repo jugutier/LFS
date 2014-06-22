@@ -9,7 +9,7 @@
 }iNode;*/
 
 typedef struct{//use N of this in block data
-	char fileName [12];
+	char fileName [MAX_FILENAME_SIZE];
 	int iNodeLocation;
 }Directory;//sizeof 16 * (N=16) = 256
 
@@ -278,14 +278,18 @@ void extentToDisk(){
 /*getBlock of that path,if its not a diretory return null,
  save list subdirectoires into return value*/
 char** list(char * path){
-	Block * b;
+	Block * b,int i;
 	Directory listofDirectories [MAX_DIRECTORY];
+	char  retVal[MAX_DIRECTORY][MAX_FILENAME_SIZE];
 	b = getBlock(path);
 	if(b == NULL || !b->isDirectory){
 		return NULL;
 	}
 	getDirectories(b,&listofDirectories);
-	return NULL;
+	for(i=0;<i<MAX_DIRECTORY;i++){
+		strcpy(retVal[i],listofDirectories[i].filename);
+	}
+	return retval;
 }
 /*
 *Deserialize directories from b into d
