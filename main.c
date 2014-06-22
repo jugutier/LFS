@@ -6,10 +6,12 @@ int main(void){
 		printf("failed while initDisk\n");
 		return -1;
 	}
+	printf("Init disk ok\n");
 	if(!initFS()){
 		printf("failed while initFS\n");
 		return -1;
 	}
+	printf("Init fs ok\n");
 	list("/");//nothing to list
 	//makedirectory("pepe");
 	//cd("pepe");

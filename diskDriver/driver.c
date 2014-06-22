@@ -35,7 +35,7 @@ void writeDisk(int fromsector, int tosector, const void * fromMemory){
 		return;
 	else if(tosector > fromsector){		
 		dataSize = (tosector - fromsector)* SECTOR_SIZE;
-		printf("pincha %d \n",dataSize);
+		//printf("pincha %d - start %p - from %p \n",dataSize, startSector, fromMemory);
 		memcpy (startSector, fromMemory, dataSize);
 	}else{
 		dataSize = (MAX_SECTOR - fromsector)* SECTOR_SIZE;
