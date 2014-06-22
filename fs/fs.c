@@ -199,13 +199,37 @@ void addEmptyDirectories(Directory ** listofDirectories){
 	}
 }
 
-void makedirectory(char * dirName){
-	/*
-	* go to parent directory and add another directory into
-	* list of directories. log parent.create a new block with
-	* subdiretories for the new "folder". log child.
-	*/
-}
+// void makedirectory(const char * dirName){
+// 	/*
+// 	* go to parent directory and add another directory into
+// 	* list of directories. log parent.create a new block with
+// 	* subdiretories for the new "folder". log child.
+// 	*/
+//
+//   char filename[100];
+//   getFilename(dirName, filename);
+//
+//   char parentDir[100];
+//   getParentDirectoryName(dirName, parentDir);
+//   Block * parentBlock = getBlock(parentDir);
+//   if (addSubdirectory(parentBlock, filename)) {
+//     log(parentBlock);
+//     log(getBlock(dirName);
+//   }
+// }
+//
+// void getParentDirectoryName(const char * path, char * parentDirName) {
+//   strcpy(parentDirName, path);
+//
+//   char filename[100];
+//   getFilename(path, filename);
+//
+//   int filenameLength = strlen(filename);
+//   int dirNameLength = strlen(parentDirName);
+//
+//   parentDir[dirNameLegth - filenameLength] = '\0';
+// }
+
 void saveToExtent(Block * block){
 	/**
 	*check if im running out of space and clear if needed
