@@ -39,6 +39,8 @@ void saveToExtent(Block * block);
 void extentToDisk();
 char** list(char * path);
 void addEmptyDirectories(Directory ** listofDirectories);
+int getBlockFromExtent(int inode);
+Block * getBlockByInode(int inodeNumber);
 /************PRIVATE FUNCTIONS **********/
 
 bool initFS(){
@@ -56,19 +58,38 @@ bool saveCR(){
 	writeDisk(currentDiskStart, currentDiskStart+1, cr);
 	return true;
 }
+/*
+* First search for block in extent.
+* If it isn't there, then check the disk.
+*/
+Block * getBlockByInode(int inodeNumber)
+{
+	Block * b;
+	int extentBlock = 0,diskBlock = 0 ;
+	extentBlock = getBlockFromExtent(iNodeNumber);
+	if(extentBlock != 0){
+		return extent+i*BLOCK_SIZE;
+	}
+	diskBlock = cr->imap[iNodeNumber];
+	if(diskBlock != 0 ){
+		b = malloc(BLOCK_SIZE);
+		return readDisk(diskBlock, diskBlock +1 , b);
+	} 
 
-// Block * getBlockByInode(int inodeNumber)
-// {
-//   /*
-//    * First search for block in extent.
-//    * If it isn't there, then check the disk.
-//    */
-//
-//   return NULL;
-// }
-//
-//
-//
+   return NULL;
+ }
+
+int getBlockFromExtent(int inode){
+	int i,found = 0;
+	for(i = 0;i< EXTENT_BLOCKS && !found;i++){
+		if(extent[i].iNodeNumber == inode){
+			found = i;
+		}
+	}
+	return found;
+}
+
+
 Block * getBlock(char * pathname) { return NULL; }
 // Block * getBlock(char * pathname)
 // {
