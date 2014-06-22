@@ -12,7 +12,7 @@ int main(void){
 		return -1;
 	}
 	printf("Init fs ok\n");
-	list("/");//nothing to list
+	ls_main(1,"/");//nothing to list
 	//makedirectory("pepe");
 	//cd("pepe");
 	//nano_main("a.txt","lorem ipsum dolor sit amet");
