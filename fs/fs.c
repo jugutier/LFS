@@ -65,13 +65,13 @@ bool saveCR(){
 Block * getBlockByInode(int iNodeNumber)
 {
 	Block * b;
-	int extentBlock = 0,diskBlock = 0 ;
+	int extentBlock = -1,diskBlock = -1 ;
 	extentBlock = getBlockFromExtent(iNodeNumber);
-	if(extentBlock != 0){
+	if(extentBlock != -1){
 		return extent+extentBlock*BLOCK_SIZE;
 	}
 	diskBlock = cr->imap[iNodeNumber];
-	if(diskBlock != 0 ){
+	if(diskBlock != -1 ){
 		b = malloc(BLOCK_SIZE);
 		readDisk(diskBlock, diskBlock +1 , b);
 		return b;
@@ -81,7 +81,7 @@ Block * getBlockByInode(int iNodeNumber)
  }
 
 int getBlockFromExtent(int inode){
-	int i,found = 0;
+	int i,found = -1;
 	for(i = 0;i< EXTENT_BLOCKS && !found;i++){
 		if(extent[i].iNodeNumber == inode){
 			found = i;
@@ -275,6 +275,8 @@ void extentToDisk(){
 }
 //return list of strings with names or null if not a directory
 char** list(char * path){
+	Block * b;
+	b = getBlock(path);
 	/*getBlock of that path,if its not a diretory return null,
 	 save list subdirectoires into return value*/
 	return NULL;
