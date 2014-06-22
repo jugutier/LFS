@@ -99,6 +99,18 @@ Block * getBlock(char * pathname) { return NULL; }
 //
 //   return current;
 // }
+//
+
+// int
+// getInodeNumber(Directory subdirectories[], const char * token) {
+//   int i;
+//   for (i = 0; i < MAX_DIRECTORY; i++) {
+//     if (strcmp(subdirectories[i]->fileName, token) == 0) {
+//       return subdirectories[i]->iNodeLocation;
+//     }
+//   }
+//   return -1;
+// }
 
 int
 getFilename(const char * path, char * filename)
