@@ -214,9 +214,9 @@ void initHomeDirectory(){
 }
 
 void addEmptyDirectories(Directory ** listofDirectories){
-	Directory newDirectories [MAX_DIRECTORY];//malloc
-	//listofDirectories = &newDirectories; asign what maloc returns
-	int i;
+	Directory *newDirectories;int i;
+	newDirectories = malloc(MAX_DIRECTORY*sizeof(Directory));
+	*listofDirectories = newDirectories;	
 	for( i = 0; i<MAX_DIRECTORY;i++){
 		newDirectories[i].iNodeLocation = -1;
 	}

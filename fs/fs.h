@@ -14,7 +14,7 @@
 #define MAX_DATA 248
 #define EXTENT_BLOCKS 5
 #define MAX_DIRECTORY 13
-#define MAX_FILENAME_SIZE 40
+#define MAX_FILENAME_SIZE 12
 
 typedef struct
 {
