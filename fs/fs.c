@@ -51,10 +51,12 @@ Block * getBlockByInode(int iNodeNumber)
 	int extentBlock = -1,diskBlock = -1 ;
 	extentBlock = getBlockFromExtent(iNodeNumber);
 	if(extentBlock != -1){
+		printf("lo saco del extent\n");
 		return extent+extentBlock*BLOCK_SIZE;
 	}
 	diskBlock = cr->imap[iNodeNumber];
 	if(diskBlock != -1 ){
+		printf("lo saco de disco\n");
 		b = malloc(BLOCK_SIZE);
 		readDisk(diskBlock, diskBlock +1 , b);
 		return b;
@@ -64,29 +66,33 @@ Block * getBlockByInode(int iNodeNumber)
  }
 //TODO: search the last occurence ??
 int getBlockFromExtent(int inode){
-	int i,found = -1;
+	int i,found = 0,where = 0;
 	for(i = 0;i< EXTENT_BLOCKS && !found;i++){
 		if(extent[i].iNodeNumber == inode){
-			found = i;
+			found = true;
+			where = i;
 		}
 	}
-	return found;
+	return where;
 }
 
 
 Block * getBlock(const char * pathname)
 {
+	printf("b\n");
   Block * currentBlock = getBlockByInode(HOME_DIRECTORY);
+  printf("b = %p\n", currentBlock);
   Directory subdirectories[MAX_DIRECTORY];
 
   const char del = '/';
   char str[MAX_FILENAME_SIZE];
   strcpy(str, pathname);
+  printf("str = %s\n", str);
 
   char * token, * saved;
 
   token = e_strtok_r(str, &del, &saved);
-
+printf("token = %s\n",token);
   int inodeNumber;
 
   while( token != NULL )
@@ -98,8 +104,9 @@ Block * getBlock(const char * pathname)
       if (currentBlock == NULL) { return NULL; } // error
 
       token = strtok_r(NULL, &del, &saved);
+      printf("b\n");
   }
-
+printf("be\n");
   return currentBlock;
 }
 
@@ -183,7 +190,9 @@ int close(int fildes) {
 	return 0;
 }
 void initHomeDirectory(){
-	saveToExtent(createEmptyBlock());
+	Block * b =createEmptyBlock();
+	b->iNodeNumber = HOME_DIRECTORY;
+	saveToExtent(b);
 }
 Block * createEmptyBlock(){
 	Block * b = malloc(sizeof(Block));
@@ -264,6 +273,7 @@ char** list(char * path){
 	Directory * listofDirectories;
 	char  **retVal;
 	b = getBlock(path);
+	printf("b = %p\n",b );
 	if(b == NULL || !b->isDirectory){
 		return NULL;
 	}
