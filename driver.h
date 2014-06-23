@@ -2,7 +2,7 @@
 #define __DRIVER_H
 
 #include <stdbool.h>
-#include "../fs/fs.h"//only for sizeof Block, TODO: remove
+#include "fs.h"//only for sizeof Block, TODO: remove
 
 #define SECTOR_QTY 10
 #define MAX_SECTOR (SECTOR_QTY-1)

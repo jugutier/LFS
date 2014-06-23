@@ -1,6 +1,6 @@
 #include "fs.h"
-#include "../diskDriver/driver.h"
-#include "../external_string_lib.h"
+#include "driver.h"
+#include "external_string_lib.h"
 
 /*typedef struct
 {

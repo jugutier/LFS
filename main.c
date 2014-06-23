@@ -1,5 +1,5 @@
-#include "diskDriver/driver.h"
-#include "fs/fs.h"
+#include "driver.h"
+#include "fs.h"
 void test1();
 void test2();
 void test3();

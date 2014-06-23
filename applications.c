@@ -1,6 +1,6 @@
 #include "applications.h"
 
-#include "fs/fs.h"
+#include "fs.h"
 
 int mkdir_main(int argc, char *argv[]){
 	if(argc!=1){
