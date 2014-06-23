@@ -3,9 +3,9 @@
 void test1();
 void test2();
 int main(void){
-	printf("Haciendo tests\n");
-	test1();
-	test2();
+	//printf("Haciendo tests\n");
+	//test1();
+	//test2();
 	if(!initDisk()){
 		printf("failed while initDisk\n");
 		return -1;
@@ -16,9 +16,10 @@ int main(void){
 		return -1;
 	}
 	printf("Init fs ok\n");
-	
-	ls_main(1,"/");//nothing to list
-	mkdir_main(1,"pepe");
+	char *path[] = {"/"};
+	ls_main(1,path);//nothing to list
+	char *pepe[] = {"pepe"};
+	mkdir_main(1,pepe);
 	//cd_main(1,"pepe");
 	//nano_main(2,{"a.txt","lorem ipsum dolor sit amet"});
 	//ls_main(1,"/");//list a.txt

@@ -79,20 +79,17 @@ int getBlockFromExtent(int inode){
 
 Block * getBlock(const char * pathname)
 {
-	printf("b\n");
   Block * currentBlock = getBlockByInode(HOME_DIRECTORY);
-  printf("b = %p\n", currentBlock);
+  printf("b = %p isDirectory = %d\n", currentBlock,currentBlock->isDirectory);
   Directory subdirectories[MAX_DIRECTORY];
 
   const char del = '/';
   char str[MAX_FILENAME_SIZE];
   strcpy(str, pathname);
-  printf("str = %s\n", str);
 
   char * token, * saved;
 
   token = e_strtok_r(str, &del, &saved);
-printf("token = %s\n",token);
   int inodeNumber;
 
   while( token != NULL )
@@ -104,9 +101,7 @@ printf("token = %s\n",token);
       if (currentBlock == NULL) { return NULL; } // error
 
       token = strtok_r(NULL, &del, &saved);
-      printf("b\n");
   }
-printf("be\n");
   return currentBlock;
 }
 
@@ -268,7 +263,7 @@ void extentToDisk(){
 /*getBlock of that path,if its not a diretory return null,
  save list subdirectoires into return value*/
 char** list(char * path){
-	printf("a\n");
+	printf("list: %s\n",path);
 	Block * b;int i;
 	Directory * listofDirectories;
 	char  **retVal;
@@ -277,13 +272,14 @@ char** list(char * path){
 	if(b == NULL || !b->isDirectory){
 		return NULL;
 	}
-	printf("a\n");
+	printf("hasta aca llegue\n");
 	listofDirectories = malloc(MAX_DIRECTORY*sizeof(Directory));
 	getDirectories(b,&listofDirectories);
 	retVal = malloc(MAX_DIRECTORY);
 	for(i=0;i<MAX_DIRECTORY;i++){
 		retVal[i] = malloc(MAX_FILENAME_SIZE);
 		strcpy(retVal[i],listofDirectories[i].fileName);
+		printf("%s\n",listofDirectories[i].fileName );
 	}
 	printf("a\n");
 	return retVal;
