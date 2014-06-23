@@ -8,11 +8,6 @@
 	void * dataBlock;
 }iNode;*/
 
-typedef struct{//use N of this in block data
-	char fileName [MAX_FILENAME_SIZE];
-	int iNodeLocation;
-}Directory;//sizeof 16 * (N=16) = 256
-
 /*typedef struct
 {
 	int iNodeNumber;
@@ -30,19 +25,6 @@ static CR * cr;
 //used for the circular buffer:
 static int currentDiskStart = 0;
 static int currentDiskEnd = MAX_SECTOR;
-
-/************PRIVATE FUNCTIONS **********/
-bool saveCR();
-void initHomeDirectory();
-Block * getBlock(char * pathname);
-void saveToExtent(Block * block);
-void extentToDisk();
-char** list(char * path);
-void addEmptyDirectories(Directory ** listofDirectories);
-int getBlockFromExtent(int inode);
-Block * getBlockByInode(int iNodeNumber);
-void getDirectories(Block * b, Directory ** d);
-/************PRIVATE FUNCTIONS **********/
 
 bool initFS(){
 	if(cr == NULL){
@@ -80,7 +62,7 @@ Block * getBlockByInode(int iNodeNumber)
 
    return NULL;
  }
-
+//TODO: search the last occurence ??
 int getBlockFromExtent(int inode){
 	int i,found = -1;
 	for(i = 0;i< EXTENT_BLOCKS && !found;i++){
@@ -92,51 +74,47 @@ int getBlockFromExtent(int inode){
 }
 
 
-Block * getBlock(char * pathname) { return NULL; }
-// Block * getBlock(char * pathname)
-// {
-//
-//   Block * currentBlock = getBlockByInode(0);
-//   Directory[13] subdirectories;
-//
-//   const char del = '/';
-//   char str[MAX_FILENAME_SIZE];
-//   strcpy(str, path);
-//
-//   char * token, * saved;
-//
-//   token = e_strtok_r(str, &del, &saved);
-//
-//   int inodeNumber;
-//
-//   while( token != NULL )
-//   {
-//       // if (!block->isDirectory) { return NULL } // error
-//       subdirectories = getSubdirectories(currentBlock); // returns an array of directories
-//       inodeNumber = getInodeNumber(subdirectories, token); // get inode number for a directory name, stored in token var.
-//       current = getInodeBlockByInode(inodeNumber);
-//       // if (current == NULL) { return NULL } // error
-//
-//       token = strtok_r(NULL, &del, &saved);
-//   }
-//
-//   return current;
-// }
-//
+Block * getBlock(const char * pathname)
+{
+  Block * currentBlock = getBlockByInode(HOME_DIRECTORY);
+  Directory subdirectories[MAX_DIRECTORY];
 
-// int
-// getInodeNumber(Directory subdirectories[], const char * token) {
-//   int i;
-//   for (i = 0; i < MAX_DIRECTORY; i++) {
-//     if (strcmp(subdirectories[i]->fileName, token) == 0) {
-//       return subdirectories[i]->iNodeLocation;
-//     }
-//   }
-//   return -1;
-// }
+  const char del = '/';
+  char str[MAX_FILENAME_SIZE];
+  strcpy(str, pathname);
 
-int
-getFilename(const char * path, char * filename)
+  char * token, * saved;
+
+  token = e_strtok_r(str, &del, &saved);
+
+  int inodeNumber;
+
+  while( token != NULL )
+  {
+      //if (!block->isDirectory) { return NULL; } // error
+      getDirectories(currentBlock,&subdirectories);// returns an array of directories
+      inodeNumber = getInodeNumber(&subdirectories, token); // get inode number for a directory name, stored in token var.
+      currentBlock = getBlockByInode(inodeNumber);
+      if (currentBlock == NULL) { return NULL; } // error
+
+      token = strtok_r(NULL, &del, &saved);
+  }
+
+  return currentBlock;
+}
+
+
+int getInodeNumber(Directory **subdirectories, const char * token) {
+  int i;
+  for (i = 0; i < MAX_DIRECTORY; i++) {
+    if (strcmp(subdirectories[i]->fileName, token) == 0) {
+      return subdirectories[i]->iNodeLocation;
+    }
+  }
+  return -1;
+}
+
+int getFilename(const char * path, char * filename)
 {
     const char del = '/';
     char str[MAX_FILENAME_SIZE];
@@ -205,53 +183,56 @@ int close(int fildes) {
 	return 0;
 }
 void initHomeDirectory(){
+	saveToExtent(createEmptyBlock());
+}
+Block * createEmptyBlock(){
 	Block * b = malloc(sizeof(Block));
 	b->isDirectory= true;
-	Directory** subdirectories;
-	addEmptyDirectories(subdirectories);
-	memcpy(b->data,subdirectories, MAX_DATA);
-	saveToExtent(b);
+	Directory * subdirectories;
+	addEmptyDirectories(&subdirectories);
+	memcpy(b->data, (char*)subdirectories, MAX_DATA);
+	return b;
 }
 
 void addEmptyDirectories(Directory ** listofDirectories){
-	Directory *newDirectories;int i;
-	newDirectories = malloc(MAX_DIRECTORY*sizeof(Directory));
-	*listofDirectories = newDirectories;	
+	int i;
+	*listofDirectories = malloc(MAX_DIRECTORY*sizeof(Directory));
 	for( i = 0; i<MAX_DIRECTORY;i++){
-		newDirectories[i].iNodeLocation = -1;
+		(*listofDirectories)[i].iNodeLocation = -1;
 	}
-}
 
-// void makedirectory(const char * dirName){
-// 	/*
-// 	* go to parent directory and add another directory into
-// 	* list of directories. log parent.create a new block with
-// 	* subdiretories for the new "folder". log child.
-// 	*/
-//
-//   char filename[100];
-//   getFilename(dirName, filename);
-//
-//   char parentDir[100];
-//   getParentDirectoryName(dirName, parentDir);
-//   Block * parentBlock = getBlock(parentDir);
-//   if (addSubdirectory(parentBlock, filename)) {
-//     log(parentBlock);
-//     log(getBlock(dirName);
-//   }
-// }
-//
-// void getParentDirectoryName(const char * path, char * parentDirName) {
-//   strcpy(parentDirName, path);
-//
-//   char filename[100];
-//   getFilename(path, filename);
-//
-//   int filenameLength = strlen(filename);
-//   int dirNameLength = strlen(parentDirName);
-//
-//   parentDir[dirNameLegth - filenameLength] = '\0';
-// }
+}
+/*
+	* go to parent directory and add another directory into
+	* list of directories. addToExtent parent.create a new block with
+	* subdiretories for the new "folder". addToExtent child.
+	*/
+void makeDirectory(const char * dirName){
+  char filename[MAX_FILENAME_SIZE];
+  getFilename(dirName, filename);
+
+  char parentDir[MAX_FILENAME_SIZE];
+  getParentDirectoryName(dirName, parentDir);
+  Block * parentBlock = getBlock(parentDir);
+  if (addSubdirectory(parentBlock, filename)) {
+    saveToExtent(parentBlock);
+    saveToExtent(getBlock(dirName));
+  }
+}
+bool addSubdirectory(Block *parentBlock, char * filename){
+	return true;
+}
+void getParentDirectoryName(const char * path, char * parentDirName) {
+  strcpy(parentDirName, path);
+
+  char filename[100];
+  getFilename(path, filename);
+
+  int filenameLength = strlen(filename);
+  int dirNameLength = strlen(parentDirName);
+
+  parentDirName[dirNameLength - filenameLength] = '\0';
+}
 
 void saveToExtent(Block * block){
 	/**
@@ -278,6 +259,7 @@ void extentToDisk(){
 /*getBlock of that path,if its not a diretory return null,
  save list subdirectoires into return value*/
 char** list(char * path){
+	printf("a\n");
 	Block * b;int i;
 	Directory * listofDirectories;
 	char  **retVal;
@@ -285,6 +267,7 @@ char** list(char * path){
 	if(b == NULL || !b->isDirectory){
 		return NULL;
 	}
+	printf("a\n");
 	listofDirectories = malloc(MAX_DIRECTORY*sizeof(Directory));
 	getDirectories(b,&listofDirectories);
 	retVal = malloc(MAX_DIRECTORY);
@@ -292,13 +275,12 @@ char** list(char * path){
 		retVal[i] = malloc(MAX_FILENAME_SIZE);
 		strcpy(retVal[i],listofDirectories[i].fileName);
 	}
+	printf("a\n");
 	return retVal;
 }
 /*
 *Deserialize directories from b into d
 */
 void getDirectories(Block * b, Directory ** d){
-	char * data = b->data;
-	int i = 0;
-	memcpy(d,b,MAX_DIRECTORY*sizeof(Directory));
+	memcpy(d,b->data,MAX_DIRECTORY*sizeof(Directory));
 }

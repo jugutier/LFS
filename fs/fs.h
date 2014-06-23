@@ -13,7 +13,7 @@
 #define HOME_DIRECTORY 1//inode number for '/' the home directory
 #define MAX_DATA 248
 #define EXTENT_BLOCKS 5
-#define MAX_DIRECTORY 13
+#define MAX_DIRECTORY 16
 #define MAX_FILENAME_SIZE 12
 
 typedef struct
@@ -22,6 +22,11 @@ typedef struct
 	bool isDirectory;
 	char data[MAX_DATA];//text file or Directory as byte string
 }Block;//sizeof = 256
+
+typedef struct{//use N of this in block data
+	char fileName [MAX_FILENAME_SIZE];
+	int iNodeLocation;
+}Directory;//sizeof 16 * (N=16) = 256
 
 #define BLOCK_SIZE sizeof(Block)
 
@@ -48,10 +53,25 @@ int write(int fildes, const void *buf, int nbyte);
 */
 int close(int fildes);
 
-void makedirectory(char * directoryName);
+void makeDirectory(const char * dirName);
 
 char ** list(char * path);
-
-
+/************PRIVATE FUNCTIONS **********/
+bool saveCR();
+void initHomeDirectory();
+Block * getBlock(const char * pathname);
+void saveToExtent(Block * block);
+void extentToDisk();
+char** list(char * path);
+void addEmptyDirectories(Directory ** listofDirectories);
+int getBlockFromExtent(int inode);
+Block * getBlockByInode(int iNodeNumber);
+void getDirectories(Block * b, Directory ** d);
 int getFilename(const char * path, char * filename);
+int getInodeNumber(Directory **subdirectories, const char * token);
+void getParentDirectoryName(const char * path, char * parentDirName);
+bool addSubdirectory(Block *parentBlock, char * filename);
+Block * createEmptyBlock();
+/************PRIVATE FUNCTIONS **********/
+
 #endif
