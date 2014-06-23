@@ -3,13 +3,20 @@
 #include <stdlib.h>
 #include <math.h>
 static void * diskStart = NULL;
-
+static void * firstSector = NULL;
 bool initDisk(){
 	if(diskStart != NULL){
 		return false;
 	}
 	diskStart = malloc(SECTOR_QTY * SECTOR_SIZE);
+	firstSector = malloc(SECTOR_SIZE);
 	return diskStart != NULL;
+}
+void readFirstSector(void * toMemory){
+	memcpy(toMemory,firstSector,SECTOR_SIZE);
+}
+void writeFirstSector(const void * fromMemory){
+	memcpy(firstSector,fromMemory,SECTOR_SIZE);
 }
 void readDisk(int fromsector, int tosector, void * toMemory){
 	bool circular = false;

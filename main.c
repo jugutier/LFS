@@ -2,26 +2,30 @@
 #include "fs/fs.h"
 void test1();
 void test2();
-int main(void){
-	//printf("Haciendo tests\n");
-	//test1();
-	//test2();
+void test3();
+int main(void){	
 	if(!initDisk()){
 		printf("failed while initDisk\n");
 		return -1;
 	}
-	printf("Init disk ok\n");
 	if(!initFS()){
 		printf("failed while initFS\n");
 		return -1;
 	}
-	printf("Init fs ok\n");
+	printf("Init ok\n");
+	printf("Running tests\n");
+	//test1();
+	//test2();
+	//test3();
+	printf("Finished tests\n");
 	char *path[] = {"/"};
 	ls_main(1,path);//nothing to list
-	char *pepe[] = {"pepe"};
+	char *pepe[] = {"/pepe"};
 	mkdir_main(1,pepe);
+	ls_main(1,path);//list pepe
 	//cd_main(1,"pepe");
-	//nano_main(2,{"a.txt","lorem ipsum dolor sit amet"});
+	char *nanoTest [2] = {"/pepe/a.txt","lorem ipsum dolor sit amet"};
+	nano_main(2,nanoTest);
 	//ls_main(1,"/");//list a.txt
 	//cat_main(1,"pepe/a.txt");
 	//cd_main(1,"..");
@@ -40,7 +44,24 @@ void test1(){
 }
 void test2(){
 	char buff[MAX_FILENAME_SIZE];
+	printf("testing folder: /pepe\n");
+	getFilename("/pepe",buff);
+	printf("foldername = %s\n", buff);
+	getParentDirectoryName("/pepe",buff);
+	printf("parent = %s\n", buff);
+	printf("testing file: /pepe/a.txt\n");
 	getFilename("/pepe/a.txt",buff);
 	printf("filename = %s\n", buff);
+	getParentDirectoryName("/pepe/a.txt",buff);
+	printf("parent = %s\n", buff);
 	printf("test2 OK\n");
+}
+void test3(){
+	Block * b;
+	int i;
+	for(i=0;i<EXTENT_BLOCKS;i++){
+		b = createEmptyBlock();
+		printf("block %d\n",i );
+		saveToExtent(b);
+	}
 }

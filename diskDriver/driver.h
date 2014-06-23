@@ -28,4 +28,7 @@ void readDisk(int fromsector, int tosector, void * toMemory);
 *@warning it writes circularly
 **/
 void writeDisk(int fromsector, int tosector, const void * fromMemory);
+
+void readFirstSector(void * toMemory);
+void writeFirstSector(const void * fromMemory);
 #endif

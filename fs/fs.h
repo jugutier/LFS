@@ -28,6 +28,10 @@ typedef struct{//use N of this in block data
 	int iNodeLocation;
 }Directory;//sizeof 16 * (N=16) = 256
 
+typedef struct{
+	int imap [64];//key inodenumber,  disk sector positions
+}CR;//sizeof = 256
+
 #define BLOCK_SIZE sizeof(Block)
 
 bool initFS();
@@ -53,7 +57,7 @@ int write(int fildes, const void *buf, int nbyte);
 */
 int close(int fildes);
 
-void makeDirectory(const char * dirName);
+int makeDirectory(const char * dirName);
 
 char ** list(char * path);
 /************PRIVATE FUNCTIONS **********/
@@ -67,11 +71,14 @@ void addEmptyDirectories(Directory ** listofDirectories);
 int getBlockFromExtent(int inode);
 Block * getBlockByInode(int iNodeNumber);
 void getDirectories(Block * b, Directory ** d);
+void setDirectories(Block *b, Directory * d);
 int getFilename(const char * path, char * filename);
-int getInodeNumber(Directory **subdirectories, const char * token);
+int getInodeNumber(Directory *subdirectories, const char * token);
 void getParentDirectoryName(const char * path, char * parentDirName);
-bool addSubdirectory(Block *parentBlock, char * filename);
+int addSubdirectory(Block *parentBlock, char * fileName);
 Block * createEmptyBlock();
+Block * createFileBlock();
+int addFile(Block * parent,Block * newBlock,char * fileName);
 /************PRIVATE FUNCTIONS **********/
 
 #endif
