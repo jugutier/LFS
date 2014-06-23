@@ -137,7 +137,7 @@ int getFilename(const char * path, char * filename)
 
 int insertInFdTable(Block * block) {
 	saveToExtent(block);
-	return currentExtentBlock;
+	return currentExtentBlock -1;
 }
 
 int open(char * pathname, int flags){
@@ -146,14 +146,19 @@ int open(char * pathname, int flags){
 	char parentDirName[MAX_FILENAME_SIZE];
 	switch(flags){
 		case  O_RDWR:
-			block = getBlock(pathname);
-			 fd = insertInFdTable(block);
-			return fd;
+      block = getBlock(pathname);
+      int fd = getBlockFromExtent(block->iNodeNumber);
+      if(fd == -1){
+        return insertInFdTable(block);
+      }else{
+        return fd;
+      }
 		break;
 		case O_RDWR|O_CREAT:// file does not exist
 			getParentDirectoryName(pathname,parentDirName);
-			printf("getting parent block for %s\n",parentDirName );
+			printf("getting parent block for %s\n",pathname );
 			parentBlock = getBlock(parentDirName);//getParentBlock(pathname);
+			printf("parent block is %d %s\n", parentBlock->iNodeNumber, parentDirName );
 			char filename[MAX_FILENAME_SIZE];
       		getFilename(pathname, filename);
       		printf("parentBlock = %p filename = %s\n",parentBlock,filename );
@@ -183,11 +188,16 @@ int addFile(Block * parent,Block * newBlock,char * fileName){
 * return -1.
 */
 int write(int fildes, const void *buf, int nbyte){
-	Block * b = &extent[fildes];
+	Block * b = &(extent[fildes]);
 	if(strlen(b->data) + nbyte >MAX_DATA){
 		return -1;
 	}
-	memcpy(b->data,buf,nbyte);
+  	return memcpy(b->data,buf,nbyte);
+}
+
+int read(int fildes, void * buff, int nbyte) {
+	Block * b = &(extent[fildes]);
+	return memcpy(buff,(const void*)b->data, (unsigned) nbyte);
 }
 
 int close(int fildes) {
