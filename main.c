@@ -26,8 +26,9 @@ int main(void){
 	//cd_main(1,"pepe");
 	char *nanoTest [2] = {"/pepe/a.txt","lorem ipsum dolor sit amet"};
 	nano_main(2,nanoTest);
-	//ls_main(1,"/");//list a.txt
-	//cat_main(1,"pepe/a.txt");
+	ls_main(1,pepe);//list a.txt
+	char *archive[] = {"/pepe/a.txt"};
+	cat_main(1,archive);
 	//cd_main(1,"..");
 	//ls_main(1,"pepe");//list pepe
 }

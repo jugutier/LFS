@@ -59,10 +59,13 @@ int nano_main(int argc, char *argv[]){
 	printf("filedes = %d\n",filedes );
 	write(filedes,text,strlen(text));
 	close(filedes);
+	Block * b = getBlockByInode(filedes);
+	printf("nano end %s\n",b->data);
 	return 0;
 }
 
 int cat_main(int argc, char *argv[]){
+	printf("cat\n");
 	if(argc!=1){
 		printf("cat: wrong number of parameters\n");
 		return -1;
