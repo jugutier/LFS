@@ -48,30 +48,29 @@ Block * getBlockByInode(int iNodeNumber)
 	extentBlock = getBlockFromExtent(iNodeNumber);
 	if(extentBlock != -1){
 		printf("from extent\n");
-		return extent+extentBlock*BLOCK_SIZE;
+		return &extent[extentBlock];
 	}
+
 	diskBlock = cr->imap[iNodeNumber];
 	if(diskBlock != -1 ){
 		printf("from disc\n");
 		b = malloc(BLOCK_SIZE);
 		readDisk(diskBlock, diskBlock +1 , b);
 		return b;
-	} 
+	}
 
    return NULL;
  }
-//TODO: search the last occurence ??
+
 int getBlockFromExtent(int inode){
 	int i,found = 0,where = 0;
-	for(i = 0;i< EXTENT_BLOCKS && !found;i++){
+	for(i = 0; i< EXTENT_BLOCKS; i++){
 		if(extent[i].iNodeNumber == inode){
-			found = true;
-			where = i;
+      return i;
 		}
 	}
-	return where;
+  return 0;
 }
-
 
 Block * getBlock(const char * pathname)
 {
