@@ -10,4 +10,6 @@ int ls_main(int argc, char *argv[]);
 int cd_main(int argc, char *argv[]);
 
 int cat_main(int argc, char *argv[]);
+
+int testScript_main(int argc, char *argv[]);
 #endif

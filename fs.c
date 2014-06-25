@@ -90,9 +90,7 @@ Block * getBlock(const char * pathname)
   while( token != NULL )
   {
       //if (!block->isDirectory) { return NULL; } // error
-      printf("directories\n");
       getDirectories(currentBlock,&subdirectories);// returns an array of directories
-      printf("iNodeNumber\n");
       inodeNumber = getInodeNumber(subdirectories, token); // get inode number for a directory name, stored in token var.
       printf("file = %s iNodeNumber %d for currentBlock %p\n",token,iNodeNumber ,currentBlock );
       currentBlock = getBlockByInode(inodeNumber);
@@ -243,10 +241,10 @@ int makeDirectory(const char * dirName){
 	printf("makeDirectory: %s\n",dirName );
 	char fileName[MAX_FILENAME_SIZE];
 	getFilename(dirName, fileName);
-	printf("filename =%s\n",fileName);
+	//printf("filename =%s\n",fileName);
 	char parentDir[MAX_FILENAME_SIZE];
 	getParentDirectoryName(dirName, parentDir);
-	printf("parentDir =%s\n",parentDir);
+	//printf("parentDir =%s\n",parentDir);
 	Block * parentBlock = getBlock(parentDir);
 	Block * childBlock;
 	int iNodeForChild;
@@ -298,7 +296,7 @@ void saveToExtent(Block * block){
 		printf("extentToDisk\n");
 		extentToDisk();
 	}
-	printf("saved %p in currentExtentBlock = %d\n",/*(extent+currentExtentBlock*BLOCK_SIZE),*/&extent[currentExtentBlock],currentExtentBlock);
+	printf("saved %p in currentExtentBlock = %d\n",&extent[currentExtentBlock],currentExtentBlock);
 	memcpy(&extent[currentExtentBlock] , block,BLOCK_SIZE) ;
 	currentExtentBlock++;
 }
@@ -321,7 +319,7 @@ void extentToDisk(){
 /*getBlock of that path,if its not a diretory return null,
  save list subdirectoires into return value*/
 char** list(char * path){
-	printf("list: %s\n",path);
+	//printf("list: %s\n",path);
 	Block * b;int i;
 	Directory listofDirectories[MAX_DIRECTORY];
 	char  **retVal;
